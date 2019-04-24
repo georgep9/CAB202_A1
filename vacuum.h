@@ -9,13 +9,13 @@ void setup_vacuum();
 
 void draw_vacuum();
 
-void move_vacuum();
-
-void update_battery();
-
 void update_vacuum();
 
 void control_vacuum(char key);
+
+void return_to_base();
+
+void pause_vacuum();
 
 void set_direction();
 int get_direction();
@@ -25,8 +25,6 @@ int get_battery_level();
 
 void set_vacuum_x();
 void set_vacuum_y();
-
-void get_vacuum_coords(double* x, double* y);
 
 char* get_vacuum_bitmap();
 

@@ -28,30 +28,35 @@ void handle_input(char input){
 		case 'r':
 			restart = true;
 			break;
-		case 'y':
-			set_battery_level();
-			break;
-        case 'i':
-            control_vacuum('i');
-            break;
-        case 'j':
-            control_vacuum('j');
-            break;
-        case 'k':
-            control_vacuum('k');
-            break;
-        case 'l':
-            control_vacuum('l');
-            break;
-        case 'p':
-        	control_vacuum('p');
-        	break;
+
         case 'm':;
         	int new_delay = get_int("New delay:");
 		    if (new_delay > 0){
 		        main_delay = new_delay;
 		    }
 		    break;
+
+		case 'p':
+			pause_vacuum();
+			break;
+
+        case 'y':
+            set_battery_level();
+            break;
+
+        case 'v':
+            set_vacuum_x();
+            set_vacuum_y();
+            set_direction();
+            break;
+
+
+        case 'b':
+            return_to_base();
+            break;
+
+		default:
+			control_vacuum(input);
 	}
 
 	// update reference time:
@@ -89,7 +94,6 @@ void loop(){
 	update_vacuum();
 	update_status();
 
-
 	clear_screen();
 	draw_screen();
 	show_screen();
@@ -104,6 +108,7 @@ int main() {
     setup_screen();
 
     setup();
+
     while (running) {
     	timer_pause(main_delay);
     	loop();

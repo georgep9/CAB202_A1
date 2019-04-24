@@ -15,7 +15,7 @@
 static double x_centre, y_centre;
 static int direction;
 static bool in_motion;
-static double return_to_base;
+static double return_mode;
 
 static int weight;
 static int battery;
@@ -43,7 +43,7 @@ void setup_vacuum(){
     y_centre = h/2;
     direction = 90;
     in_motion = false;
-    return_to_base = false;
+    return_mode = false;
     weight = 0;
     battery = 100;
 }
@@ -70,12 +70,8 @@ void rotate_vacuum(){
     // add angle between -30 & 30
     direction += rand() % 61 - 30;
     // keep the direction within 0 - 359 range:
-    if (direction >= 360){
-        direction -= 360;
-    } 
-    else if (direction < 0){
-        direction += 360;
-    }
+    if (direction >= 360){ direction -= 360; } 
+    else if (direction < 0){ direction += 360; }
 }
 
 // check if the vacuum at a given position, collides with described object
@@ -107,7 +103,7 @@ void move_vacuum(){
     int w,h;
     get_screen_size(&w,&h);
 
-    if (in_motion){
+    if (in_motion && return_mode == false){
         double rad = direction * PI/180;
         // calculate new x and y
         double new_x = x_centre + 0.2*cos(rad);
@@ -127,26 +123,29 @@ void move_vacuum(){
     }
 }
 
+// update battery status
 void update_battery(){
-
     int seconds_passed = get_seconds_passed();
     if (battery != 0 && (battery-seconds_passed) >= 0){
             battery -= seconds_passed;
         }
+    else if (battery == 0){
+        return_mode = true;
+    }
 }
 
 void update_vacuum(){
-    move_vacuum();
-    update_battery();
-}
-
-void vacuum_collides(){
-
+    if (return_mode){
+        // TODO
+    }
+    else{
+        move_vacuum();
+        update_battery();
+    }
 }
 
 void control_vacuum(char key){
     switch(key){
-        
         case 'i':
             if (within_borders(x_centre, y_centre-1, SIZE, SIZE)) { 
                 y_centre--; 
@@ -167,14 +166,14 @@ void control_vacuum(char key){
                 x_centre++; 
             }
             break;
-
-        case 'p':
-            if (in_motion){ in_motion = false; }
-            else { in_motion = true; }
-
-        case 'b':
-            return_to_base = true;
     }
+}
+
+void return_to_base(){ return_mode = true; }
+
+void pause_vacuum(){
+    if (in_motion){ in_motion = false; }
+    else { in_motion = true; }    
 }
 
 void set_direction(){
@@ -183,10 +182,7 @@ void set_direction(){
         direction = new_direction;
     }
 }
-int get_direction(){
-    return direction;
-}
-
+int get_direction(){ return direction; }
 
 void set_battery_level(){
     int new_level = get_int("New battery level:");
@@ -194,24 +190,18 @@ void set_battery_level(){
         battery = new_level;
     }
 }
-int get_battery_level(){
-    return battery;
-}
+int get_battery_level(){ return battery; }
 
 void set_vacuum_x(){
     int x = get_int("Set vacuum x:");
-    int left_bound = 1;
-    int right_bound = screen_width() - 1;
-    if (x-SIZE/2 > left_bound && x+SIZE/2 < right_bound){
+    if (within_borders(x, y_centre, SIZE, SIZE)){
         x_centre = x;
     }
 }
 
 void set_vacuum_y(){
     int y = get_int("Set vacuum y:");
-    int top_bound = 5;
-    int bottom_bound =  screen_height() - 3;
-    if (y-SIZE/2 > top_bound && y+SIZE/2 < bottom_bound){
+    if (within_borders(x_centre, y, SIZE, SIZE)){
         y_centre = y;
     }
 }
@@ -221,6 +211,4 @@ void get_vacuum_coords(double* x, double*y){
     *y = y_centre;
 }
 
-char* get_vacuum_bitmap(){
-    return (char*)vacuum_bitmap;
-}
+char* get_vacuum_bitmap(){ return (char*)vacuum_bitmap; }

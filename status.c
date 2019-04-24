@@ -63,10 +63,6 @@ void draw_status(){
 	int battery = get_battery_level();
 	draw_formatted(((width-1)*5/6)-6,1,"Battery: %d%", battery);
 
-	double vx,vy;
-	get_vacuum_coords(&vx,&vy);
-	draw_formatted(1,1,"x: %f y: %f t: %d l: %d b: %d r: %d", vx,vy,5,1,screen_height(),screen_width());
-
 }
 
 void update_status(){
