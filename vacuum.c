@@ -15,10 +15,11 @@
 static double x_centre, y_centre;
 static int direction;
 static bool in_motion;
-static double return_mode;
+static bool return_mode;
 
 static int weight;
 static int battery;
+static bool charging_battery;
 
 const char* vacuum_bitmap =
 "?????@@@?????"
@@ -46,6 +47,7 @@ void setup_vacuum(){
     return_mode = false;
     weight = 0;
     battery = 100;
+    charging_battery = false;
 }
 
 void draw_vacuum(){
@@ -98,6 +100,27 @@ bool collides_with(int x, int y, char object[]){
                             x1, y1, w1, h1, object_bitmap);
 }
 
+void move_vacuum_to_base(){
+
+    if (charging_battery == false){
+        int station_x, station_y;
+        get_station_coords(&station_x, &station_y);
+
+        double x_distance = station_x - x_centre;
+        double y_distance = station_y - y_centre;
+        double new_direction = atan(y_distance/x_distance);
+        if (x_distance < 0){ new_direction += PI; }
+        double new_x = x_centre + 0.2*cos(new_direction);
+        double new_y = y_centre + 0.2*sin(new_direction);
+
+        if (collides_with(new_x,new_y,"station")){ charging_battery = true; }
+        else {
+            if (within_borders(new_x, y_centre, SIZE, SIZE)) { x_centre = new_x; }
+            if (within_borders(x_centre, new_y, SIZE, SIZE)) { y_centre =new_y; }
+        }
+    }
+}
+
 void move_vacuum(){
 
     int w,h;
@@ -121,27 +144,34 @@ void move_vacuum(){
             } else { rotate_vacuum(); } // otherwise rotate
         } else { rotate_vacuum(); } // otherwise rotate
     }
+
+    if (return_mode){ move_vacuum_to_base(); }
 }
 
 // update battery status
 void update_battery(){
     int seconds_passed = get_seconds_passed();
-    if (battery != 0 && (battery-seconds_passed) >= 0){
-            battery -= seconds_passed;
+    if (charging_battery){
+        int rate = 100/3;
+        if (seconds_passed == 1 && battery < 99){
+            battery += rate;
         }
-    else if (battery == 0){
-        return_mode = true;
+        else if (battery >= 99){ 
+            charging_battery = false;
+            return_mode = false;
+        }
+    }
+    else if (battery != 0 && (battery-seconds_passed) >= 0){
+        battery -= seconds_passed;
     }
 }
 
 void update_vacuum(){
-    if (return_mode){
-        // TODO
-    }
-    else{
-        move_vacuum();
-        update_battery();
-    }
+
+    if (battery < 24) { return_mode = true; }
+
+    move_vacuum();
+    update_battery();
 }
 
 void control_vacuum(char key){
