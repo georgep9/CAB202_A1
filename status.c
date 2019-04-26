@@ -6,7 +6,9 @@
 
 static double elasped_time; // elasped time of simulation
 static double reference_time; // reference time to get seconds passed
-static int seconds_passed; // time between current and reference
+static double seconds_passed; // time between current and reference
+
+double check_double;
 
 void draw_borders(){
 
@@ -44,6 +46,8 @@ void setup_status(){
 	elasped_time = 0;
 	reference_time = get_current_time();
 	seconds_passed = 0;
+
+	check_double = 0;
 }
 
 // draw the status 
@@ -63,6 +67,8 @@ void draw_status(){
 	int battery = get_battery_level();
 	draw_formatted(((width-1)*5/6)-6,1,"Battery: %d%", battery);
 
+	draw_formatted(1,1,"Diagnosis number: %f", check_double);
+
 }
 
 void update_status(){
@@ -70,8 +76,8 @@ void update_status(){
 	double current_time = get_current_time();
 
 	// check if 1 second has passed
-	seconds_passed = (int)(current_time - reference_time);
-	if (seconds_passed == 1){
+	seconds_passed = current_time - reference_time;
+	if ((int)seconds_passed == 1){
 
 		elasped_time++;
 
@@ -106,3 +112,7 @@ void set_reference_time(double t){
 double get_reference_time(){
 	return reference_time;
 }
+
+
+
+void diagnose_double(double number){ check_double = number; }

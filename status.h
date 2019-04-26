@@ -23,3 +23,5 @@ double get_seconds_passed();
 
 void set_reference_time(double t);
 double get_reference_time();
+
+void diagnose_double(double number);
