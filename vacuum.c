@@ -113,7 +113,7 @@ void move_vacuum_to_base(){
     double new_y = y_centre + 0.2*sin(new_direction); // new y to be
 
     // if new x & y collides with station, vacuum becomes docked
-    if (collides_with(new_x,new_y,"station")){ vacuum_docked = true }
+    if (collides_with((int)new_x,(int)new_y,"station")){ vacuum_docked = true; }
     else { 
         vacuum_docked = false;
         // else, set vacuum x & y to be new x & y if within borders
@@ -211,6 +211,17 @@ void update_vacuum(){
 
     move_vacuum(); // move vacuum, default behaviour
     update_battery(); // update battery status
+
+    if(collides_with_dust(x_centre, y_centre, SIZE, SIZE, (char*)vacuum_bitmap)){
+        diagnose_double(1);
+    }
+    if(collides_with_slime(x_centre, y_centre, SIZE, SIZE, (char*)vacuum_bitmap)){
+        diagnose_double(2);
+    }
+    if(collides_with_trash(x_centre, y_centre, SIZE, SIZE, (char*)vacuum_bitmap)){
+        diagnose_double(3);
+    }
+
 }
 
 // move the vacuum by keys
@@ -294,6 +305,11 @@ void set_vacuum_y(){
 void get_vacuum_coords(double* x, double*y){
     *x = x_centre;
     *y = y_centre;
+}
+
+void get_vacuum_size(int* w, int* h){
+    *w = SIZE;
+    *h = SIZE;
 }
 
 char* get_vacuum_bitmap(){ return (char*)vacuum_bitmap; }

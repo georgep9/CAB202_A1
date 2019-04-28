@@ -1,4 +1,4 @@
-OBJ=main.o status.o station.o vacuum.o collision.o helpers.o
+OBJ=main.o status.o station.o vacuum.o collision.o helpers.o rubbish.o
 
 # Fix the directories to match your file organisation.
 CC_FLAGS=-std=gnu99 -I../ZDK -Wall -Werror -g

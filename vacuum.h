@@ -26,6 +26,9 @@ int get_battery_level();
 void set_vacuum_x();
 void set_vacuum_y();
 
+void get_vacuum_coords(double*x, double*y);
+void get_vacuum_size(int* w, int* h);
+
 char* get_vacuum_bitmap();
 
 double get_charging_ref_time();

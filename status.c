@@ -66,7 +66,7 @@ void draw_status(){
 	int battery = get_battery_level();
 	draw_formatted(((width-1)*5/6)-6,1,"Battery: %d%", battery);
 
-	draw_formatted(1,1,"Diagnosis number: %f", check_double);
+	draw_formatted(1,2,"Diagnosis number: %f", check_double);
 
 }
 

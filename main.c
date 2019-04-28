@@ -9,6 +9,7 @@
 #include "vacuum.h"
 #include "station.h"
 #include "collision.h"
+#include "rubbish.h"
 
 // Global variables
 bool running;
@@ -68,7 +69,7 @@ void handle_input(char input){
 	set_reference_time(new_reference_time);
 
 	// same as above, for battery charging reference time
-	double new_charging_ref_time = get_current_time() * 1000 - charging_time_diff
+	double new_charging_ref_time = get_current_time() * 1000 - charging_time_diff;
 	set_charging_ref_time(new_charging_ref_time);
 
 }
@@ -77,6 +78,7 @@ void draw_screen(){
 	draw_borders();
 	draw_status();
 	draw_station();
+	draw_rubbish();
 	draw_vacuum();
 }
 
@@ -86,9 +88,9 @@ void setup () {
 	main_delay = 1;
 
 	setup_status();
-	setup_collision();
 	setup_station();
 	setup_vacuum();
+	setup_rubbish();
 	
 	clear_screen();
 	draw_screen();
