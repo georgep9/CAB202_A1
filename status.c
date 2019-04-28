@@ -55,7 +55,6 @@ void draw_status(){
 
 	int width = screen_width();
 
-
 	int direction = get_direction();
 	draw_formatted(((width-1-7)*3/6),1,"Direction: %d",direction);
 
@@ -78,27 +77,13 @@ void update_status(){
 	// check if 1 second has passed
 	seconds_passed = current_time - reference_time;
 	if ((int)seconds_passed == 1){
-
 		elasped_time++;
-
-		/*// update battery level
-		if (battery_level != 0){battery_level--;}
-		*/
-
-		// update step/reference time
 		reference_time = current_time;
 	} 
 	// in the case of a large loop delay
 	else if (seconds_passed > 1){
-
 		elasped_time += (int)seconds_passed;
-
-		/*if (battery_level != 0 && (battery_level-(int)seconds_passed) >= 0){
-			battery_level -= (int)seconds_passed;
-		}*/
-
 		reference_time = current_time;
-
 	}
 }
 

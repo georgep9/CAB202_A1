@@ -17,9 +17,11 @@ int main_delay;
 
 void handle_input(char input){
 
-	// time difference between current and reference time,
+	// time difference between current and reference time (in status),
 	// used to update reference time if input dialogs occur
 	double time_difference = get_current_time() - get_reference_time();
+	// same as above, for battery charging reference time
+	double charging_time_diff = get_current_time() * 1000 - get_charging_ref_time();
 
 	switch(input){
 		case 'q':
@@ -50,7 +52,6 @@ void handle_input(char input){
             set_direction();
             break;
 
-
         case 'b':
             return_to_base();
             break;
@@ -65,6 +66,10 @@ void handle_input(char input){
 	// refer to notes in 'status.c'
 	double new_reference_time = get_current_time() - time_difference;
 	set_reference_time(new_reference_time);
+
+	// same as above, for battery charging reference time
+	double new_charging_ref_time = get_current_time() * 1000 - charging_time_diff
+	set_charging_ref_time(new_charging_ref_time);
 
 }
 

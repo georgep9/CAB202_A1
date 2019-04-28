@@ -28,3 +28,5 @@ void set_vacuum_y();
 
 char* get_vacuum_bitmap();
 
+double get_charging_ref_time();
+void set_charging_ref_time(double t);

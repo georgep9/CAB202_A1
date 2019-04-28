@@ -74,16 +74,6 @@ void draw_vacuum(){
     }
 }
 
-// rotates vacuum by changing direciton either left or right by a random angle between 30 and 60 degrees
-void rotate_vacuum(){
-    srand(time(NULL));
-    // add angle between -30 & 30
-    direction += rand() % 61 - 30;
-    // keep the direction within 0 - 359 range:
-    if (direction >= 360){ direction -= 360; } 
-    else if (direction < 0){ direction += 360; }
-}
-
 // check if the vacuum at a given position, collides with described object
 bool collides_with(int x, int y, char object[]){
 
@@ -110,27 +100,36 @@ bool collides_with(int x, int y, char object[]){
 
 // moves the vacuum to charging station by constantly checking position relative to station
 void move_vacuum_to_base(){
-    // move if vacuum is not docked already
-    if (vacuum_docked == false){
-        //get position of station
-        int station_x, station_y;
-        get_station_coords(&station_x, &station_y);
 
-        double x_distance = station_x - x_centre; // x distance of station from vacuum
-        double y_distance = station_y - y_centre; // y distance of station from vacuum
-        double new_direction = atan(y_distance/x_distance); // direction (rad) to station
-        if (x_distance < 0){ new_direction += PI; } // adjust direction to be in 360 range
-        double new_x = x_centre + 0.2*cos(new_direction); // new x to be
-        double new_y = y_centre + 0.2*sin(new_direction); // new y to be
+    //get position of station
+    int station_x, station_y;
+    get_station_coords(&station_x, &station_y);
 
-        // if new x & y collides with station, vacuum becomes docked
-        if (collides_with(new_x,new_y,"station")){ vacuum_docked = true; }
-        else { 
-            // else, set vacuum x & y to be new x & y if within borders
-            if (within_borders(new_x, y_centre, SIZE, SIZE)) { x_centre = new_x; }
-            if (within_borders(x_centre, new_y, SIZE, SIZE)) { y_centre =new_y; }
-        }
+    double x_distance = station_x - x_centre; // x distance of station from vacuum
+    double y_distance = station_y - y_centre; // y distance of station from vacuum
+    double new_direction = atan(y_distance/x_distance); // direction (rad) to station
+    if (x_distance < 0){ new_direction += PI; } // adjust direction to be in 360 range
+    double new_x = x_centre + 0.2*cos(new_direction); // new x to be
+    double new_y = y_centre + 0.2*sin(new_direction); // new y to be
+
+    // if new x & y collides with station, vacuum becomes docked
+    if (collides_with(new_x,new_y,"station")){ vacuum_docked = true }
+    else { 
+        vacuum_docked = false;
+        // else, set vacuum x & y to be new x & y if within borders
+        if (within_borders(new_x, y_centre, SIZE, SIZE)) { x_centre = new_x; }
+        if (within_borders(x_centre, new_y, SIZE, SIZE)) { y_centre = new_y; }
     }
+}
+
+// rotates vacuum by changing direciton either left or right by a random angle between 30 and 60 degrees
+void rotate_vacuum(){
+    srand(time(NULL));
+    // add angle between -30 & 30
+    direction += rand() % 61 - 30;
+    // keep the direction within 0 - 359 range:
+    if (direction >= 360){ direction -= 360; } 
+    else if (direction < 0){ direction += 360; }
 }
 
 // move vacuum by default behaviour
@@ -298,3 +297,6 @@ void get_vacuum_coords(double* x, double*y){
 }
 
 char* get_vacuum_bitmap(){ return (char*)vacuum_bitmap; }
+
+double get_charging_ref_time(){ return charging_ref_time; }
+void set_charging_ref_time(double t) { charging_ref_time = t; }
